@@ -1,4 +1,3 @@
-# os for file management
 import os
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -6,6 +5,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
+import time
 
 options = Options()
 options.add_argument("start-maximized")
@@ -13,11 +14,14 @@ options.add_argument("disable-infobars")
 options.add_argument("--disable-extensions")
 
 # using Chrome to access the web
-driver = webdriver.Chrome(chrome_options=options, 
+driver = webdriver.Chrome(options=options, 
 	executable_path='C:/Users/joao_/Downloads/chromedriver_win32/chromedriver.exe')
 
 # open the website
 driver.get('https://www.stitcher.com')
+
+# time for login (make it automatic!)
+time.sleep(30)
 
 # select the class
 search_button = driver.find_element_by_class_name('searchButton')
