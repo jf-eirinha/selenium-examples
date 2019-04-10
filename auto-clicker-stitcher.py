@@ -12,6 +12,7 @@ options = Options()
 options.add_argument("start-maximized")
 options.add_argument("disable-infobars")
 options.add_argument("--disable-extensions")
+options.add_argument("--lang=en-us")
 
 # using Chrome to access the web
 driver = webdriver.Chrome(options=options, 
@@ -69,9 +70,8 @@ found = True
 while found:
 
 	try:
-		load_more_button = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.CLASS_NAME, 'loadMore')))
+		load_more_button = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.LINK_TEXT, 'Load More Episodes')))
+		load_more_button.click()
 		print("Click")
 	except TimeoutException:
-		print ("Loading took too much time!")
-
-	load_more_button.click()
+		print ("You've reached the end OR page was still loading")
