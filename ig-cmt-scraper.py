@@ -32,7 +32,7 @@ delay = 10
 # Load more comments loop
 clickaroo = True
 
-# try/except to load click button each page reload. 
+# Try/except to load click button each page reload. 
 # On last comments it might show "View all XX comments" instead of "Load more comments"
 while clickaroo:
 
@@ -52,15 +52,17 @@ try:
 except TimeoutException:
         print ("Loaded all comments. In case the comments did not fully load try increasing delay.")
 
+# Find all comments
 menuitems = driver.find_elements_by_xpath('//li[@role="menuitem"]//span')
 
 comments = []
 
+# Add the webelement's text to list
 for menuitem in menuitems:
         comments.append(menuitem.text)
 
+# Convert list to pandas dataframe
 comments_df = pd.DataFrame(comments)
-comments_df.to_csv("ig-cmts.csv", index=False, header=False)
 
-#with open("ig-cmts.csv", 'w', encoding="utf-8") as f:
-#        csv.writer(f).writerows(comments)
+# Write df to csv
+comments_df.to_csv("ig-cmts.csv", index=False, header=False)
