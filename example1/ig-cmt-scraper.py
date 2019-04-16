@@ -26,7 +26,7 @@ def main(argv):
 
         # Initialize Web Driver
         driver = webdriver.Chrome(options=options,
-        executable_path=FLAGS.exe_path)
+                executable_path=FLAGS.exe_path)
 
         # Input IG url
         url = input('Input the url to the photo/video: ')
