@@ -1,3 +1,5 @@
+import pandas as pd
+import csv
 import os
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -25,7 +27,7 @@ url = input('Input the url to the photo/video: ')
 driver.get(url)
 
 # Define page loading time delay
-delay = 5
+delay = 10
 
 # Load more comments loop
 clickaroo = True
@@ -40,11 +42,25 @@ while clickaroo:
                 ActionChains(driver).move_to_element(load_more_button).click(load_more_button).perform()
                 print("Loading more comments")
         except TimeoutException:
-                pass
-        try:
-                load_more_button = WebDriverWait(driver, delay).until(EC.presence_of_element_located((
-                        By.XPATH, '//button[contains(text(), "View all")]')))
-                ActionChains(driver).move_to_element(load_more_button).click(load_more_button).perform()    
-        except TimeoutException:
-                print ("Loaded all comments. In case the comments did not fully load try increasing delay.")
                 clickaroo = False
+                pass
+
+try:
+        load_more_button = WebDriverWait(driver, delay).until(EC.presence_of_element_located((
+        By.XPATH, '//button[contains(text(), "View all")]')))
+        ActionChains(driver).move_to_element(load_more_button).click(load_more_button).perform()    
+except TimeoutException:
+        print ("Loaded all comments. In case the comments did not fully load try increasing delay.")
+
+menuitems = driver.find_elements_by_xpath('//li[@role="menuitem"]//span')
+
+comments = []
+
+for menuitem in menuitems:
+        comments.append(menuitem.text)
+
+comments_df = pd.DataFrame(comments)
+comments_df.to_csv("ig-cmts.csv", index=False, header=False)
+
+#with open("ig-cmts.csv", 'w', encoding="utf-8") as f:
+#        csv.writer(f).writerows(comments)
