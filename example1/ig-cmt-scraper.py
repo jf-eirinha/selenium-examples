@@ -32,7 +32,7 @@ delay = 10
 # Load more comments loop
 clickaroo = True
 
-# Try/except to load click button each page reload. 
+# Try/except to load click button each page reload
 # On last comments it might show "View all XX comments" instead of "Load more comments"
 while clickaroo:
 
@@ -43,7 +43,6 @@ while clickaroo:
                 print("Loading more comments")
         except TimeoutException:
                 clickaroo = False
-                pass
 
 try:
         load_more_button = WebDriverWait(driver, delay).until(EC.presence_of_element_located((
