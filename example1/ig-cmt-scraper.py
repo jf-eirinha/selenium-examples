@@ -8,6 +8,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.action_chains import ActionChains
+from absl import flags
+from absl import app
 
 # Web Driver options
 options = Options()
@@ -16,52 +18,63 @@ options.add_argument("disable-infobars")
 options.add_argument("--disable-extensions")
 options.add_argument("--lang=en-us")
 
-# Initialize Web Driver
-driver = webdriver.Chrome(options=options,
- executable_path='C:/Users/joao_/Downloads/chromedriver_win32/chromedriver.exe')
+# Flags
+FLAGS = flags.FLAGS
+flags.DEFINE_string('exe_path', 'C:/Users/Morty/Downloads/chromedriver_win32/chromedriver.exe', 'Path to Chrome Driver.')
 
-# Input IG url
-url = input('Input the url to the photo/video: ')
+def main(argv):
 
-# Open page
-driver.get(url)
+        # Initialize Web Driver
+        driver = webdriver.Chrome(options=options,
+        executable_path=FLAGS.exe_path)
 
-# Define page loading time delay
-delay = 10
+        # Input IG url
+        url = input('Input the url to the photo/video: ')
 
-# Load more comments loop
-clickaroo = True
+        # Open page
+        driver.get(url)
 
-# Try/except to load click button each page reload
-# On last comments it might show "View all XX comments" instead of "Load more comments"
-while clickaroo:
+        # Define page loading time delay
+        delay = 10
+
+        # Load more comments loop
+        clickaroo = True
+
+        # Try/except to load click button each page reload
+        # On last comments it might show "View all XX comments" instead of "Load more comments"
+        while clickaroo:
+
+                try:
+                        load_more_button = WebDriverWait(driver, delay).until(EC.presence_of_element_located((
+                                By.XPATH, '//button[text()="Load more comments"]')))
+                        ActionChains(driver).move_to_element(load_more_button).click(load_more_button).perform()
+                        print("Loading more comments")
+                except TimeoutException:
+                        clickaroo = False
 
         try:
                 load_more_button = WebDriverWait(driver, delay).until(EC.presence_of_element_located((
-                        By.XPATH, '//button[text()="Load more comments"]')))
-                ActionChains(driver).move_to_element(load_more_button).click(load_more_button).perform()
-                print("Loading more comments")
+                By.XPATH, '//button[contains(text(), "View all")]')))
+                ActionChains(driver).move_to_element(load_more_button).click(load_more_button).perform()    
         except TimeoutException:
-                clickaroo = False
+                print ("Loaded all comments. In case the comments did not fully load try increasing delay.")
 
-try:
-        load_more_button = WebDriverWait(driver, delay).until(EC.presence_of_element_located((
-        By.XPATH, '//button[contains(text(), "View all")]')))
-        ActionChains(driver).move_to_element(load_more_button).click(load_more_button).perform()    
-except TimeoutException:
-        print ("Loaded all comments. In case the comments did not fully load try increasing delay.")
+        # Find all comments
+        menuitems = driver.find_elements_by_xpath('//li[@role="menuitem"]//span')
 
-# Find all comments
-menuitems = driver.find_elements_by_xpath('//li[@role="menuitem"]//span')
+        comments = []
 
-comments = []
+        # Add the webelement's text to list
+        print('Creating list with comments')
+        for menuitem in menuitems:
+                comments.append(menuitem.text)
 
-# Add the webelement's text to list
-for menuitem in menuitems:
-        comments.append(menuitem.text)
+        # Convert list to pandas dataframe
+        comments_df = pd.DataFrame(comments)
 
-# Convert list to pandas dataframe
-comments_df = pd.DataFrame(comments)
+        # Write df to csv
+        print('Saving comments to csv')
+        comments_df.to_csv("ig-cmts.csv", index=False, header=False)
 
-# Write df to csv
-comments_df.to_csv("ig-cmts.csv", index=False, header=False)
+if __name__ == '__main__':
+        app.run(main)
