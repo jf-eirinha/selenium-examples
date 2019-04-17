@@ -9,6 +9,7 @@ from selenium.common.exceptions import TimeoutException
 from absl import flags
 from absl import app
 
+# Web Driver options
 options = Options()
 options.add_argument("start-maximized")
 options.add_argument("disable-infobars")
