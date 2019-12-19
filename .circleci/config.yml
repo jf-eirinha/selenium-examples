@@ -50,7 +50,7 @@ jobs:
             curl https://chromedriver.storage.googleapis.com/79.0.3945.36/chromedriver_linux64.zip --output chromedriver.zip
             unzip chromedriver.zip
             . venv/bin/activate
-            python ./example1/ig-cmt-scraper.py --exe_path ./chromedriver.exe
+            python ./example1/ig-cmt-scraper.py --exe_path ./chromedriver
 
       - store_artifacts:
           path: test-reports
