@@ -48,7 +48,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            python ./example1/g-cmt-scraper.py
+            python example1/g-cmt-scraper.py
 
       - store_artifacts:
           path: test-reports
